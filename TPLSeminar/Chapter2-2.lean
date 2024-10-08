@@ -16,7 +16,7 @@
 def α : Type := Nat
 def β : Type := Bool
 def F : Type → Type := List
-def G : Type → Type → Type := Prod
+def G : Type → (Type → Type) := Prod
 
 #check α        -- Type
 #check F α      -- Type
@@ -36,35 +36,43 @@ def G : Type → Type → Type := Prod
 
 #check Type      -- Type 1
 
+#check Prop
+#check Type 0
 #check Type 1
 #check Type 2
 #check Type 3
 #check Type 4
 
-#check Type
-#check Type 0
-
-#check Prop
-#check Sort
 #check Sort 0
-
 #check Sort 1
 #check Sort 2
 #check Sort 3
 #check Sort 4
 
+#check True
+#check trivial
+
+#check Bool
+#check true
+#check Nat → Nat
+
+#check Nat → Type
+#check fun (_ : Nat) => Nat
+
+#check Type → Type 1
+#check fun (_ : Type) => Type
 
 #check List    -- List.{u} (α : Type u) : Type u
 
 #check Prod    -- Prod.{u, v} (α : Type u) (β : Type v) : Type (max u v)
 
-universe u
+-- universe u
 def F' (α : Type u) : Type u := Prod α α       -- `Type u` に属する型 `α` を受け取ると、`α` と `α` の直積型を返す関数
 #check F'                                      -- Type u → Type u
 
 def F''.{v} (α : Type v) : Type v := Prod α α
 
-#check F''    -- Type u → Type u
+#check F''    -- Type v → Type v
 
 -- universe の指定について
 

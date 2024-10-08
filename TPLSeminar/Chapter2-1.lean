@@ -9,7 +9,11 @@ def b2 : Bool := false
 
 -- #check <項>
 #check m                   -- output: Nat
+#check b1                  -- output: Bool
+#check and
+#check and b1 b2
 #check b1 && b2            -- `&&` は「かつ」 output: Bool
+#check or
 #check b1 || b2            -- `||` は「または」 output: Bool
 
 -- #eval <項>
@@ -17,6 +21,7 @@ def b2 : Bool := false
 #eval m + 2                -- 3
 #eval b1 && b2             -- false
 
+#check Nat
 #check Nat → Nat                   -- `→` は "\to" あるいは "\r" と打つと入力できる
 #check Nat -> Nat                  -- `->` は `→` のASCII表記
 
@@ -26,15 +31,20 @@ def b2 : Bool := false
 #check Nat → Nat → Nat
 #check Nat → (Nat → Nat)           -- これは1つ上と同じである。つまり、`→` は右結合的である
 #check Nat × Nat → Nat
+#check Nat × (Nat → Nat)
+#check (Nat × Nat) → Nat
 #check (Nat → Nat) → Nat           -- 関数を受け取る関数の型
 
 #check Nat.succ                    -- Nat → Nat
 #check (0, 1)                      -- Nat × Nat
+#check Prod.mk
+#check Prod.mk 0
+#check Prod.mk 0 1                 -- Nat × Nat
 #check Nat.add                     -- Nat → Nat → Nat
 
 #check Nat.succ 2                  -- Nat
 #check Nat.add 3                   -- Nat → Nat
-#check Nat.add 5 2                 -- Nat
+#check Nat.add 3 2                 -- Nat
 #check (5, 9).1                    -- Nat
 #check (5, 9).2                    -- Nat
 

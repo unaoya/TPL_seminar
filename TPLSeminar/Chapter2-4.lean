@@ -16,10 +16,12 @@ def double' : Nat → Nat :=
 
 def double'' :=
   fun (x : Nat) => x + x
+
 #eval double'' 3    -- 6
 
--- def foo : α := bar
+example : double = double' := rfl
 
+-- def foo : α := bar
 
 def pi := 3.141592654
 
@@ -37,6 +39,10 @@ def greater (x y : Nat) :=
   if x > y then x
   else y
 
+#check ite
+
+#check 7 > 6
+
 #eval greater 7 6             -- 7
 #eval greater 99 100          -- 100
 #eval greater 5 5             -- 5
@@ -53,5 +59,8 @@ def doTwice (f : Nat → Nat) (x : Nat) : Nat :=
 def compose (α β γ : Type) (g : β → γ) (f : α → β) (x : α) : γ :=
   g (f x)
 
-#eval compose Nat Nat Nat double square 3        -- 18
+#eval compose _ _ _ double square 3        -- 18
 #eval compose Nat Nat Nat square double 3        -- 36
+
+
+-- iteだと同じ型でしかできない、真偽で違う型の項を返したい時にどうするか？

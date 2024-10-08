@@ -3,6 +3,8 @@
   Namespaces
 -/
 
+def a : Nat := 3
+
 namespace Foo
   def a : Nat := 5
   def f (x : Nat) : Nat := x + 7
@@ -11,15 +13,18 @@ namespace Foo
   def ffa : Nat := f (f a)
 
   #check a
+  #eval a
   #check f
   #check fa
   #check ffa
   #check Foo.fa
 end Foo
 
--- #check a  -- error
--- #check f  -- error
+#check a  -- error
+#eval a
+#check f  -- error
 #check Foo.a
+#eval Foo.a
 #check Foo.f
 #check Foo.fa
 #check Foo.ffa
@@ -27,11 +32,11 @@ end Foo
 open Foo
 
 #check a
+-- #eval a
 #check f
+-- #eval f a
 #check fa
 #check Foo.fa
-
-end Foo
 
 #check List.nil
 #check List.cons
@@ -43,39 +48,28 @@ open List
 #check cons
 #check map
 
-end List
 
 namespace Foo
-  def a : Nat := 5
-  def f (x : Nat) : Nat := x + 7
-
-  def fa : Nat := f a
 
   namespace Bar
-    def ffa : Nat := f (f a)
+    def fffa : Nat := f (f a)
 
     #check fa
     #check ffa
+    #check fffa
   end Bar
 
   #check fa
-  #check Bar.ffa
+  #check Bar.fffa
 end Foo
 
 #check Foo.fa
-#check Foo.Bar.ffa
+#check Foo.Bar.fffa
 
 open Foo
 
 #check fa
-#check Bar.ffa
-
-namespace Foo
-  def a : Nat := 5
-  def f (x : Nat) : Nat := x + 7
-
-  def fa : Nat := f a
-end Foo
+#check Bar.fffa
 
 #check Foo.a
 #check Foo.f
