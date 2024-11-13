@@ -2,6 +2,11 @@
   Classical Logic
 -/
 
+#check Classical.choice
+
+#check Classical.choose
+#check Classical.em
+
 open Classical
 
 variable (p q : Prop)

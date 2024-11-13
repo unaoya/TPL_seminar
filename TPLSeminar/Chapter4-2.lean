@@ -2,6 +2,9 @@
   Equality
 -/
 
+#check Eq
+#check @Eq Nat
+
 #check Eq.refl    -- Eq.refl.{u_1} (a : α) : a = a
 #check Eq.symm    -- Eq.symm.{u} {α : Sort u} {a b : α} (h : a = b) : b = a
 #check Eq.trans   -- Eq.trans.{u} {α : Sort u} {a b c : α} (h₁ : a = b) (h₂ : b = c) : a = c
@@ -14,6 +17,8 @@ universe u
 
 variable (α : Type) (a b c d : α)
 variable (hab : a = b) (hcb : c = b) (hcd : c = d)
+
+#check Eq a b
 
 example : a = d :=
   Eq.trans (Eq.trans hab (Eq.symm hcb)) hcd
@@ -71,6 +76,9 @@ example : (a + b) * c = a * c + b * c := Nat.right_distrib a b c
 example (x y : Nat) : (x + y) * (x + y) = x * x + y * x + x * y + y * y :=
   have h1 : (x + y) * (x + y) = (x + y) * x + (x + y) * y :=
     Nat.mul_add (x + y) x y
+  have h' := (Nat.add_mul x y y)
+  have h : (x + y) * (x + y) = (x + y) * x + (x * y + y * y) :=
+    h' ▸ h1
   have h2 : (x + y) * (x + y) = x * x + y * x + (x * y + y * y) :=
     (Nat.add_mul x y x) ▸ (Nat.add_mul x y y) ▸ h1
   h2.trans (Nat.add_assoc (x * x + y * x) (x * y) (y * y)).symm

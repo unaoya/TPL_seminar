@@ -28,13 +28,13 @@ example : f 5 = 7 := rfl
 def Tuple (α : Type) (n : Nat) :=
   { as : List α // as.length = n }
 
-def f {n : Nat} (t : Tuple α n) : Nat := by
+def f₁ {n : Nat} (t : Tuple α n) : Nat := by
   cases n; exact 3; exact 7
 
 def myTuple : Tuple Nat 3 :=
   ⟨[0, 1, 2], rfl⟩
 
-example : f myTuple = 7 :=
+example : f₁ myTuple = 7 :=
   rfl
 
 inductive Foo where
@@ -49,41 +49,26 @@ def silly (x : Foo) : Nat := by
 #eval silly (Foo.bar1 1 2)    -- 2
 #eval silly (Foo.bar2 3 4 5)  -- 5
 
-inductive Foo where
-  | bar1 : Nat → Nat → Foo
-  | bar2 : Nat → Nat → Nat → Foo
-
-def silly (x : Foo) : Nat := by
+def silly₁ (x : Foo) : Nat := by
   cases x with
   | bar2 c d e => exact e
   | bar1 a b => exact b
 
-inductive Foo where
-  | bar1 : Nat → Nat → Foo
-  | bar2 : Nat → Nat → Nat → Foo
-def silly (x : Foo) : Nat := by
+def silly₂ (x : Foo) : Nat := by
   cases x
   case bar1 a b => exact b
   case bar2 c d e => exact e
 
-
-inductive Foo where
-  | bar1 : Nat → Nat → Foo
-  | bar2 : Nat → Nat → Nat → Foo
-def silly (x : Foo) : Nat := by
+def silly₃ (x : Foo) : Nat := by
   cases x
   case bar2 c d e => exact e
   case bar1 a b => exact b
-
-open Nat
 
 example (p : Nat → Prop) (hz : p 0) (hs : ∀ n, p (succ n)) (m k : Nat)
         : p (m + 3 * k) := by
   cases m + 3 * k
   . exact hz   -- goal is p 0
   . apply hs   -- goal is a : Nat ⊢ p (succ a)
-
-open Nat
 
 example (p : Nat → Prop) (hz : p 0) (hs : ∀ n, p (succ n)) (m k : Nat)
         : p (m + 3 * k) := by
@@ -117,24 +102,17 @@ theorem t1 (m n : Nat) : m - n = 0 ∨ m ≠ n := by
 
 
 namespace Hidden
+
 theorem zero_add (n : Nat) : 0 + n = n := by
   induction n with
   | zero => rfl
   | succ n ih => rw [Nat.add_succ, ih]
-end Hidden
 
-namespace Hidden
-theorem zero_add (n : Nat) : 0 + n = n := by
-  induction n
-  case zero => rfl
-  case succ n ih => rw [Nat.add_succ, ih]
-end Hidden
-
-namespace Hidden
 theorem add_zero (n : Nat) : n + 0 = n := Nat.add_zero n
+
 open Nat
 
-theorem zero_add (n : Nat) : 0 + n = n := by
+theorem zero_add₁ (n : Nat) : 0 + n = n := by
   induction n <;> simp [*, add_zero, add_succ]
 
 theorem succ_add (m n : Nat) : succ m + n = succ (m + n) := by

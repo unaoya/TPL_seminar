@@ -7,13 +7,18 @@
 
 example (α : Type) (p q : α → Prop) : (∀ x : α, p x ∧ q x) → ∀ y : α, p y :=
   fun h : ∀ x : α, p x ∧ q x =>
-  fun y : α =>
-  show p y from (h y).left
+  fun y : α => (h y).left
+  -- show p y from (h y).left
 
-example (α : Type) (p q : α → Prop) : (∀ x : α, p x ∧ q x) → ∀ x : α, p x :=
+theorem h (α : Type) (p q : α → Prop) : (∀ x : α, p x ∧ q x) → ∀ y : α, p y :=
   fun h : ∀ x : α, p x ∧ q x =>
-  fun z : α =>
-  show p z from And.left (h z)
+  fun y : α => (h y).left
+  -- show p y from (h y).left
+
+example (α : Type) (p q : α → Prop) : (∀ x : α, p x ∧ q x) → ∀ x : α, p x := h α p q
+  -- fun h : ∀ x : α, p x ∧ q x =>
+  -- fun z : α =>
+  -- show p z from And.left (h z)
 
 variable (α : Type) (r : α → α → Prop)
 variable (trans_r : ∀ x y z, r x y → r y z → r x z)
@@ -52,3 +57,12 @@ universe i j
 #check fun α : Sort 2 => fun β : Sort 1 => (x : α) → β
 #check fun α : Sort 0 => fun β : Sort 1 => (x : α) → β
 #check fun α : Sort 1 => fun β : Sort 0 => (x : α) → β
+
+variable (α : Type) (p q : α → Prop)
+
+example : (∀ x, p x) ∨ (∀ x, q x) → ∀ x, p x ∨ q x :=
+  fun h : (∀ x, p x) ∨ (∀ x, q x) =>
+    fun x : α =>
+      Or.elim h
+        (fun h₁ : ∀ x, p x => Or.inl (h₁ x))
+        (fun h₂ : ∀ x, q x => Or.inr (h₂ x))

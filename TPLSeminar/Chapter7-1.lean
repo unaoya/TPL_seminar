@@ -11,14 +11,6 @@ inductive Weekday where
   | friday : Weekday
   | saturday : Weekday
 
-inductive Weekday where
- | sunday : Weekday
- | monday : Weekday
- | tuesday : Weekday
- | wednesday : Weekday
- | thursday : Weekday
- | friday : Weekday
- | saturday : Weekday
 #check Weekday.sunday
 #check Weekday.monday
 
@@ -27,23 +19,15 @@ open Weekday
 #check sunday
 #check monday
 
-inductive Weekday where
-  | sunday
-  | monday
-  | tuesday
-  | wednesday
-  | thursday
-  | friday
-  | saturday
+-- inductive Weekday where
+--   | sunday
+--   | monday
+--   | tuesday
+--   | wednesday
+--   | thursday
+--   | friday
+--   | saturday
 
-inductive Weekday where
- | sunday : Weekday
- | monday : Weekday
- | tuesday : Weekday
- | wednesday : Weekday
- | thursday : Weekday
- | friday : Weekday
- | saturday : Weekday
 open Weekday
 
 def numberOfDay (d : Weekday) : Nat :=
@@ -60,25 +44,6 @@ def numberOfDay (d : Weekday) : Nat :=
 #eval numberOfDay Weekday.monday  -- 2
 #eval numberOfDay tuesday         -- 3
 
-inductive Weekday where
- | sunday : Weekday
- | monday : Weekday
- | tuesday : Weekday
- | wednesday : Weekday
- | thursday : Weekday
- | friday : Weekday
- | saturday : Weekday
-open Weekday
-
-def numberOfDay (d : Weekday) : Nat :=
-  match d with
-  | sunday    => 1
-  | monday    => 2
-  | tuesday   => 3
-  | wednesday => 4
-  | thursday  => 5
-  | friday    => 6
-  | saturday  => 7
 
 set_option pp.all true    -- 詳細な情報を表示させるオプション
 #print numberOfDay
@@ -101,30 +66,13 @@ set_option pp.all true    -- 詳細な情報を表示させるオプション
     (t : Weekday) → motive t
 -/
 
-inductive Weekday where
-  | sunday
-  | monday
-  | tuesday
-  | wednesday
-  | thursday
-  | friday
-  | saturday
-  deriving Repr
 
 open Weekday
 
 #eval tuesday   -- Weekday.tuesday (``deriving Repr`` を外すとエラーになる)
 
-inductive Weekday where
- | sunday : Weekday
- | monday : Weekday
- | tuesday : Weekday
- | wednesday : Weekday
- | thursday : Weekday
- | friday : Weekday
- | saturday : Weekday
- deriving Repr
 namespace Weekday
+
 def next (d : Weekday) : Weekday :=
   match d with
   | sunday    => monday
@@ -153,34 +101,6 @@ example : next (previous tuesday) = tuesday :=
 
 end Weekday
 
-inductive Weekday where
- | sunday : Weekday
- | monday : Weekday
- | tuesday : Weekday
- | wednesday : Weekday
- | thursday : Weekday
- | friday : Weekday
- | saturday : Weekday
- deriving Repr
-namespace Weekday
-def next (d : Weekday) : Weekday :=
- match d with
- | sunday    => monday
- | monday    => tuesday
- | tuesday   => wednesday
- | wednesday => thursday
- | thursday  => friday
- | friday    => saturday
- | saturday  => sunday
-def previous (d : Weekday) : Weekday :=
- match d with
- | sunday    => saturday
- | monday    => sunday
- | tuesday   => monday
- | wednesday => tuesday
- | thursday  => wednesday
- | friday    => thursday
- | saturday  => friday
 theorem next_previous (d : Weekday) : next (previous d) = d :=
   match d with
   | sunday    => rfl
@@ -191,46 +111,31 @@ theorem next_previous (d : Weekday) : next (previous d) = d :=
   | friday    => rfl
   | saturday  => rfl
 
-inductive Weekday where
- | sunday : Weekday
- | monday : Weekday
- | tuesday : Weekday
- | wednesday : Weekday
- | thursday : Weekday
- | friday : Weekday
- | saturday : Weekday
- deriving Repr
-namespace Weekday
-def next (d : Weekday) : Weekday :=
- match d with
- | sunday    => monday
- | monday    => tuesday
- | tuesday   => wednesday
- | wednesday => thursday
- | thursday  => friday
- | friday    => saturday
- | saturday  => sunday
-def previous (d : Weekday) : Weekday :=
- match d with
- | sunday    => saturday
- | monday    => sunday
- | tuesday   => monday
- | wednesday => tuesday
- | thursday  => wednesday
- | friday    => thursday
- | saturday  => friday
-def next_previous (d : Weekday) : next (previous d) = d := by
+def next_previous_ (d : Weekday) : next (previous d) = d := by
   cases d <;> rfl
 
 namespace Hidden
-inductive Bool where
-  | false : Bool
-  | true  : Bool
-end Hidden
 
-namespace Hidden
+inductive Bool where
+  | t : Bool
+  | f : Bool
+
 def and (a b : Bool) : Bool :=
   match a with
-  | true  => b
-  | false => false
+  | Bool.t => b
+  | Bool.f => Bool.f
+
+def or (a b : Bool) : Bool :=
+  match a with
+  | Bool.t => Bool.t
+  | Bool.f => b
+
+def not (a : Bool) : Bool :=
+  match a with
+  | Bool.t => Bool.f
+  | Bool.f => Bool.t
+
+theorem deMorgan (a b : Bool) : not (and a b) = or (not a) (not b) := by
+  cases a <;> cases b <;> rfl
+
 end Hidden

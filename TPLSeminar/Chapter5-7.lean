@@ -94,7 +94,7 @@ example (xs ys : List Nat) (p : List Nat → Prop)
         : p (mk_symm ys ++ xs.reverse) := by
   simp [reverse_mk_symm] at h; assumption
 
-@[simp] theorem reverse_mk_symm (xs : List α)
+@[simp] theorem reverse_mk_symm₁ (xs : List α)
         : (mk_symm xs).reverse = mk_symm xs := by
   simp [mk_symm]
 
@@ -143,7 +143,7 @@ example (xs ys : List Nat) (p : List Nat → Prop)
 end
 
 
-@[simp] theorem reverse_mk_symm (xs : List α)
+@[simp] theorem reverse_mk_symm₂ (xs : List α)
         : (mk_symm xs).reverse = mk_symm xs := by
   simp [mk_symm]
 

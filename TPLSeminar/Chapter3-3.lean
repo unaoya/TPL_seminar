@@ -18,14 +18,24 @@ example (h : p ∧ q) : q := And.right h
 example (h : p ∧ q) : q ∧ p :=
   And.intro (And.right h) (And.left h)
 
+-- #check Prod p q
+
 variable (hp : p) (hq : q)
 
+#check (⟨hp, hq⟩ : p ∧ q)
 #check (⟨hp, hq⟩ : p ∧ q)
 
 variable (xs : List Nat)
 
 #check List.length xs
 #check xs.length
+
+section
+
+variable (h : p ∧ q)
+#check h.left
+
+end
 
 example (h : p ∧ q) : q ∧ p :=
   ⟨h.right, h.left⟩
@@ -36,7 +46,10 @@ example (h : p ∧ q) : q ∧ p ∧ q :=
 example (h : p ∧ q) : q ∧ p ∧ q :=
   ⟨h.right, h.left, h.right⟩
 
+
 example (hp : p) : p ∨ q := Or.intro_left q hp
+example (hp : p) : p ∨ q := Or.inl hp
+
 example (hq : q) : p ∨ q := Or.intro_right p hq
 
 example (h : p ∨ q) : q ∨ p :=
@@ -52,6 +65,8 @@ example (h : p ∨ q) : q ∨ p :=
 example (h : p ∨ q) : q ∨ p :=
   h.elim (fun hp => Or.inr hp) (fun hq => Or.inl hq)
 
+
+
 example (hpq : p → q) (hnq : ¬q) : ¬p :=
   fun hp : p =>
   show False from hnq (hpq hp)
@@ -62,6 +77,14 @@ example (hp : p) (hnp : ¬p) : q := absurd hp hnp
 
 example (hnp : ¬p) (hq : q) (hqp : q → p) : r :=
   absurd (hqp hq) hnp
+
+#check True
+#check True.intro
+
+example : p → True := fun _ => True.intro
+
+#check Iff
+#check Iff.intro
 
 theorem and_swap : p ∧ q ↔ q ∧ p :=
   Iff.intro

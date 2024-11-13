@@ -15,7 +15,13 @@ example : f 0 ≤ f 3 :=
   have : f 0 ≤ f 2 := Nat.le_trans (by assumption) (h 1)
   show f 0 ≤ f 3 from Nat.le_trans (by assumption) (h 2)
 
-notation "‹" p "›" => show p by assumption
+-- notation "‹" p "›" => show p by assumption
+
+variable (p : Prop)
+
+example : p → p := fun h => show p by assumption
+
+example : p → p := fun h => ‹p›
 
 example : f 0 ≥ f 1 → f 1 ≥ f 2 → f 0 = f 2 :=
   fun _ : f 0 ≥ f 1 =>

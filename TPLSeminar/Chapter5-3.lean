@@ -10,17 +10,35 @@ example (p q : Prop) : p ∨ q → q ∨ p := by
 
 example (p q : Prop) : p ∨ q → q ∨ p := by
   intro h
+  match h with
+  | Or.inl hp => apply Or.inr; exact hp
+  | Or.inr hq => apply Or.inl; exact hq
+
+example (p q : Prop) : p ∨ q → q ∨ p := by
+  intro h
   cases h with
   | inr hq => apply Or.inl; exact hq
   | inl hp => apply Or.inr; exact hp
 
 example (p q : Prop) : p ∨ q → q ∨ p := by
   intro h
+  match h with
+  | Or.inr hq => apply Or.inl; exact hq
+  | Or.inl hp => apply Or.inr; exact hp
+
+example (p q : Prop) : p ∨ q → q ∨ p := by
+  intro h
   cases h
-  apply Or.inr
-  assumption
-  apply Or.inl
-  assumption
+  · apply Or.inr
+    assumption
+  · apply Or.inl
+    assumption
+
+example (p : Prop) : p ∨ p → p := by
+  intro h
+  cases h
+  · assumption
+  · assumption
 
 example (p : Prop) : p ∨ p → p := by
   intro h
@@ -68,6 +86,12 @@ example (p q : Prop) : p ∧ q → q ∧ p := by
   cases h with
   | intro hp hq => apply And.intro; exact hq; exact hp
 
+example (p q : Prop) : p ∧ q → q ∧ p := by
+  intro h
+  cases h with
+  | intro hp hq => exact ⟨hq, hp⟩
+
+
 example (p q r : Prop) : p ∧ (q ∨ r) ↔ (p ∧ q) ∨ (p ∧ r) := by
   apply Iff.intro
   . intro h
@@ -84,6 +108,22 @@ example (p q r : Prop) : p ∧ (q ∨ r) ↔ (p ∧ q) ∨ (p ∧ r) := by
     | inr hpr =>
       cases hpr with
       | intro hp hr => constructor; exact hp; apply Or.inr; exact hr
+
+example (p q r : Prop) : p ∧ (q ∨ r) ↔ (p ∧ q) ∨ (p ∧ r) := by
+  apply Iff.intro
+  . intro
+    | And.intro hp (Or.inl hq) => apply Or.inl; constructor <;> assumption
+    | And.intro hp (Or.inr hr) => apply Or.inr; constructor <;> assumption
+  . intro h
+    cases h with
+    | inl hpq =>
+      cases hpq with
+      | intro hp hq => constructor; exact hp; apply Or.inl; exact hq
+    | inr hpr =>
+      cases hpr with
+      | intro hp hr => constructor; exact hp; apply Or.inr; exact hr
+
+-- 11/13ここまで
 
 example (p q : Nat → Prop) : (∃ x, p x) → ∃ x, p x ∨ q x := by
   intro h

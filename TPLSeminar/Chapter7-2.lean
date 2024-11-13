@@ -9,11 +9,7 @@ inductive Prod (α : Type u) (β : Type v)
 inductive Sum (α : Type u) (β : Type v) where
   | inl : α → Sum α β
   | inr : β → Sum α β
-end Hidden
 
-namespace Hidden
-inductive Prod (α : Type u) (β : Type v)
-  | mk : α → β → Prod α β
 def fst {α : Type u} {β : Type v} (p : Prod α β) : α :=
   match p with
   | Prod.mk a b => a
@@ -45,25 +41,12 @@ def sum_example2 (s : Sum Nat Nat) : Nat :=
 #eval sum_example2 (Sum.inl 3)
 #eval sum_example2 (Sum.inr 3)
 
-def sum_example (s : Sum Nat Nat) : Nat :=
-  Sum.casesOn (motive := fun _ => Nat) s
-    (fun n => 2 * n)
-    (fun n => 2 * n + 1)
-
-#eval sum_example (Sum.inl 3)
-#eval sum_example (Sum.inr 3)
-
-def sum_example2 (s : Sum Nat Nat) : Nat :=
-  match s with
-  | Sum.inl a => 2 * a
-  | Sum.inr b => 2 * b + 1
-
-#eval sum_example2 (Sum.inl 3)
-#eval sum_example2 (Sum.inr 3)
 
 namespace Hidden
-structure Prod (α : Type u) (β : Type v) where
-  mk :: (fst : α) (snd : β)
+
+-- structure Prod (α : Type u) (β : Type v) where
+--   mk :: (fst : α) (snd : β)
+
 end Hidden
 
 structure Color where
@@ -75,11 +58,11 @@ def yellow := Color.mk 255 255 0
 #print Color.red  -- ``structure`` キーワードにより生成された射影関数
 #eval Color.red yellow
 
-structure Color where
-  red : Nat
-  green : Nat
-  blue : Nat
-  deriving Repr
+-- structure Color where
+--   red : Nat
+--   green : Nat
+--   blue : Nat
+--   deriving Repr
 
 structure Semigroup where
   carrier : Type u
@@ -98,4 +81,28 @@ inductive Option (α : Type u) where
 
 inductive Inhabited (α : Type u) where
   | mk : α → Inhabited α
+
+-- 練習問題
+
+def comp (f : α → Option β) (g : β → Option γ) : α → Option γ :=
+  fun a =>
+    match f a with
+    | Option.none => Option.none
+    | Option.some b => g b
+
+example : Inhabited Nat := ⟨0⟩
+example : Inhabited Bool := ⟨true⟩
+
+-- example (α β : Type u) [Inhabited α] [Inhabited β] : Inhabited (α × β) := sorry
+
+example (α β : Type u) (hα : Inhabited α) (hβ : Inhabited β) : Inhabited (α × β) :=
+  match hα with
+  | Inhabited.mk a =>
+    match hβ with
+    | Inhabited.mk b => Inhabited.mk (a, b)
+
+example (α β : Type u) (hβ : Inhabited β) : Inhabited (α → β) :=
+  match hβ with
+  | ⟨b⟩ => Inhabited.mk (fun _ => b)
+
 end Hidden

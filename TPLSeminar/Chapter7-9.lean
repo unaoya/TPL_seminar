@@ -29,8 +29,12 @@ mutual
       | cons : Tree α → TreeList α → TreeList α
 end
 
+namespace Hidden
+
 inductive Tree (α : Type u) where
   | mk : α → List (Tree α) → Tree α
+
+end Hidden
 
 /-
   Exercises

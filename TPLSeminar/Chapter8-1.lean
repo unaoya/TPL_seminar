@@ -17,14 +17,6 @@ def isZero : Nat → Bool
   | zero   => true
   | succ x => false
 
-
-open Nat
-def sub1 : Nat → Nat
-  | zero   => zero
-  | succ x => x
-def isZero : Nat → Bool
-  | zero   => true
-  | succ x => false
 example : sub1 0 = 0 := rfl
 example (x : Nat) : sub1 (succ x) = x := rfl
 
@@ -34,13 +26,13 @@ example (x : Nat) : isZero (succ x) = false := rfl
 example : sub1 7 = 6 := rfl
 example (x : Nat) : isZero (x + 3) = false := rfl
 
-def sub1 : Nat → Nat
-  | 0   => 0
-  | x+1 => x
+-- def sub1 : Nat → Nat
+--   | 0   => 0
+--   | x+1 => x
 
-def isZero : Nat → Bool
-  | 0   => true
-  | x+1 => false
+-- def isZero : Nat → Bool
+--   | 0   => true
+--   | x+1 => false
 
 def swap : α × β → β × α
   | (a, b) => (b, a)
@@ -78,22 +70,18 @@ def sub2 : Nat → Nat
   | 1   => 0
   | x+2 => x
 
-def sub2 : Nat → Nat
-  | 0   => 0
-  | 1   => 0
-  | x+2 => x
 example : sub2 0 = 0 := rfl
 example : sub2 1 = 0 := rfl
 example : sub2 (x+2) = x := rfl
 
 example : sub2 5 = 3 := rfl
 
-def sub2 : Nat → Nat :=
-  fun x =>
-    match x with
-    | 0   => 0
-    | 1   => 0
-    | x+2 => x
+-- def sub2 : Nat → Nat :=
+--   fun x =>
+--     match x with
+--     | 0   => 0
+--     | 1   => 0
+--     | x+2 => x
 
 example (p q : α → Prop)
         : (∃ x, p x ∨ q x) → (∃ x, p x) ∨ (∃ x, q x)
@@ -110,14 +98,14 @@ example (p q : α → Prop)
   | Exists.intro x (Or.inl px) => Or.inl (Exists.intro x px)
   | Exists.intro x (Or.inr qx) => Or.inr (Exists.intro x qx)
 
-def foo : Nat × Nat → Nat
+def foo₁ : Nat × Nat → Nat
   | (0, n)     => 0
   | (m+1, 0)   => 1
   | (m+1, n+1) => 2
 
 -- `a :: as` は `cons a as` の糖衣構文
 
-def bar : List Nat → List Nat → Nat
+def bar₁ : List Nat → List Nat → Nat
   | [],      []      => 0
   | a :: as, []      => a
   | [],      b :: bs => b
@@ -144,342 +132,6 @@ def tail1 {α : Type u} : List α → List α
 def tail2 : {α : Type u} → List α → List α
   | α, []      => []
   | α, a :: as => as
-
-/-
-	Wildcards and Overlapping Patterns
--/
-def foo : Nat → Nat → Nat
-  | 0,   n   => 0
-  | m+1, 0   => 1
-  | m+1, n+1 => 2
-
-def foo : Nat → Nat → Nat
-  | 0, n => 0
-  | m, 0 => 1
-  | m, n => 2
-
-def foo : Nat → Nat → Nat
-  | 0, n => 0
-  | m, 0 => 1
-  | m, n => 2
-example : foo 0     0     = 0 := rfl
-example : foo 0     (n+1) = 0 := rfl
-example : foo (m+1) 0     = 1 := rfl
-example : foo (m+1) (n+1) = 2 := rfl
-
-def foo : Nat → Nat → Nat
-  | 0, _ => 0
-  | _, 0 => 1
-  | _, _ => 2
-
-def f1 : Nat → Nat → Nat
-  | 0, _  => 1
-  | _, 0  => 2
-  | _, _  => default  -- the "incomplete" case
-
-example : f1 0     0     = 1       := rfl
-example : f1 0     (a+1) = 1       := rfl
-example : f1 (a+1) 0     = 2       := rfl
-example : f1 (a+1) (b+1) = default := rfl
-
-def f2 : Nat → Nat → Option Nat
-  | 0, _  => some 1
-  | _, 0  => some 2
-  | _, _  => none     -- the "incomplete" case
-
-example : f2 0     0     = some 1 := rfl
-example : f2 0     (a+1) = some 1 := rfl
-example : f2 (a+1) 0     = some 2 := rfl
-example : f2 (a+1) (b+1) = none   := rfl
-
-def bar : Nat → List Nat → Bool → Nat
-  | 0,   _,      false => 0
-  | 0,   b :: _, _     => b
-  | 0,   [],     true  => 7
-  | a+1, [],     false => a
-  | a+1, [],     true  => a + 1
-  | a+1, b :: _, _     => a + b
-
-def foo : Char → Nat
-  | 'A' => 1
-  | 'B' => 2
-  | _   => 3
-
-#print foo.match_1
-
-/-
-	Structual Recursion and Induction
--/
-open Nat
-def add : Nat → Nat → Nat
-  | m, zero   => m
-  | m, succ n => succ (add m n)
-
-theorem add_zero (m : Nat)   : add m zero = m := rfl
-theorem add_succ (m n : Nat) : add m (succ n) = succ (add m n) := rfl
-
-theorem zero_add : ∀ n, add zero n = n
-  | zero   => rfl
-  | succ n => congrArg succ (zero_add n)
-
-def mul : Nat → Nat → Nat
-  | n, zero   => zero
-  | n, succ m => add (mul n m) n
-
-theorem mul_zero (m : Nat)   : mul m zero = zero := rfl
-theorem mul_succ (m n : Nat) : mul m (succ n) = add (mul m n) m := rfl
-
-open Nat
-def add : Nat → Nat → Nat
-  | m, zero   => m
-  | m, succ n => succ (add m n)
-theorem zero_add : ∀ n, add zero n = n
-  | zero   => by simp [add]
-  | succ n => by simp [add, zero_add]
-
-open Nat
-def add (m : Nat) : Nat → Nat
-  | zero   => m
-  | succ n => succ (add m n)
-
-
-/- `match` を使う場合はもちろん `:=` が必要になる -/
-
-open Nat
-def add (m n : Nat) : Nat :=
-  match n with
-  | zero   => m
-  | succ n => succ (add m n)
-
-def fib : Nat → Nat
-  | 0   => 1
-  | 1   => 1
-  | n+2 => fib (n+1) + fib n
-
-example : fib 0 = 1 := rfl
-example : fib 1 = 1 := rfl
-example : fib (n + 2) = fib (n + 1) + fib n := rfl
-
-example : fib 7 = 21 := rfl
-
-def fibFast (n : Nat) : Nat :=
-  (loop n).2
-where
-  loop : Nat → Nat × Nat
-    | 0   => (0, 1)
-    | n+1 => let p := loop n; (p.2, p.1 + p.2)
-
-#eval fibFast 100
-
-def fibFast (n : Nat) : Nat :=
-  let rec loop : Nat → Nat × Nat
-    | 0   => (0, 1)
-    | n+1 => let p := loop n; (p.2, p.1 + p.2)
-  (loop n).2
-
-variable (C : Nat → Type u)
-
-#check (@Nat.below C : Nat → Type u)
-
-#reduce @Nat.below C (3 : Nat)
-
-#check (@Nat.brecOn C : (n : Nat) → ((n : Nat) → @Nat.below C n → C n) → C n)
-
-def fib : Nat → Nat
-  | 0   => 1
-  | 1   => 1
-  | n+2 => fib (n+1) + fib n
-
--- #eval fib 50 -- slow
-#reduce fib 50  -- fast
-
-#print fib
-
-def append : List α → List α → List α
-  | [],    bs => bs
-  | a::as, bs => a :: append as bs
-
-example : append [1, 2, 3] [4, 5] = [1, 2, 3, 4, 5] := rfl
-
-def listAdd [Add α] : List α → List α → List α
-  | [],      _       => []
-  | _,       []      => []
-  | a :: as, b :: bs => (a + b) :: listAdd as bs
-
-#eval listAdd [1, 2, 3] [4, 5, 6, 6, 9, 10]
--- [5, 7, 9]
-
-/-
-	Local Recursive Declarations
--/
-def replicate (n : Nat) (a : α) : List α :=
-  let rec loop : Nat → List α → List α
-    | 0,   as => as
-    | n+1, as => loop n (a::as)
-  loop n []
-
-#check @replicate.loop
--- {α : Type} → α → Nat → List α → List α
-
-def replicate (n : Nat) (a : α) : List α :=
- let rec loop : Nat → List α → List α
-   | 0,   as => as
-   | n+1, as => loop n (a::as)
- loop n []
-theorem length_replicate (n : Nat) (a : α) : (replicate n a).length = n := by
-  let rec aux (n : Nat) (as : List α)
-              : (replicate.loop a n as).length = n + as.length := by
-    match n with
-    | 0   => simp [replicate.loop]
-    | n+1 => simp [replicate.loop, aux n, Nat.add_succ, Nat.succ_add]
-  exact aux n []
-
-def replicate (n : Nat) (a : α) : List α :=
-  loop n []
-where
-  loop : Nat → List α → List α
-    | 0,   as => as
-    | n+1, as => loop n (a::as)
-
-theorem length_replicate (n : Nat) (a : α) : (replicate n a).length = n := by
-  exact aux n []
-where
-  aux (n : Nat) (as : List α)
-      : (replicate.loop a n as).length = n + as.length := by
-    match n with
-    | 0   => simp [replicate.loop]
-    | n+1 => simp [replicate.loop, aux n, Nat.add_succ, Nat.succ_add]
-
-/-
-	Well-Founded Recursion and Induction
--/
-variable (α : Sort u)
-variable (r : α → α → Prop)
-
-#check (Acc r : α → Prop)
-#check (WellFounded r : Prop)
-
-noncomputable def f {α : Sort u}
-      (r : α → α → Prop)
-      (h : WellFounded r)
-      (C : α → Sort v)
-      (F : (x : α) → ((y : α) → r y x → C y) → C x)
-      : (x : α) → C x := WellFounded.fix h F
-
-open Nat
-
-theorem div_lemma {x y : Nat} : 0 < y ∧ y ≤ x → x - y < x :=
-  fun h => sub_lt (Nat.lt_of_lt_of_le h.left h.right) h.left
-
-def div.F (x : Nat) (f : (x₁ : Nat) → x₁ < x → Nat → Nat) (y : Nat) : Nat :=
-  if h : 0 < y ∧ y ≤ x then
-    (f (x - y) (div_lemma h) y) + 1
-  else
-    zero
-
-noncomputable def div := WellFounded.fix (measure id).wf div.F
-
-#reduce div 8 2 -- 4
-
-def div (x y : Nat) : Nat :=
-  if h : 0 < y ∧ y ≤ x then
-    have : x - y < x := Nat.sub_lt (Nat.lt_of_lt_of_le h.1 h.2) h.1
-    (div (x - y) y) + 1
-  else
-    0
-
-def div (x y : Nat) : Nat :=
- if h : 0 < y ∧ y ≤ x then
-   have : x - y < x := Nat.sub_lt (Nat.lt_of_lt_of_le h.1 h.2) h.1
-   div (x - y) y + 1
- else
-   0
-example (x y : Nat) : div x y = if 0 < y ∧ y ≤ x then div (x - y) y + 1 else 0 := by
-  conv => lhs; unfold div -- 等式の左辺の `div` を展開する
-
-example (x y : Nat) (h : 0 < y ∧ y ≤ x) : div x y = div (x - y) y + 1 := by
-  conv => lhs; unfold div
-  simp [h]
-
-def natToBin : Nat → List Nat
-  | 0     => [0]
-  | 1     => [1]
-  | n + 2 =>
-    have : (n + 2) / 2 < n + 2 := sorry
-    natToBin ((n + 2) / 2) ++ [n % 2]
-
-#eval natToBin 1234567
-
-def ack : Nat → Nat → Nat
-  | 0,   y   => y+1
-  | x+1, 0   => ack x 1
-  | x+1, y+1 => ack x (ack (x+1) y)
-termination_by x y => (x, y)
-
-#eval ack 3 5
--- アッカーマン関数は入力値の増加に伴い出力値が急速に増加する関数であり、
--- 例えば `#eval ack 4 1` などはバッファオーバーフロー等のエラーを引き起こす可能性が高いため、
--- 実行しないことをお勧めする。
-
-instance (priority := low) [SizeOf α] : WellFoundedRelation α :=
-  sizeOfWFRel
-
--- Array `as` を先頭から見て、
--- `as` の要素 `a` が `p a` を満たす限りArray `r` に `a` を追加し、`r` を返す関数
-def takeWhile (p : α → Bool) (as : Array α) : Array α :=
-  go 0 #[]
-where
-  go (i : Nat) (r : Array α) : Array α :=
-    if h : i < as.size then
-      let a := as.get ⟨i, h⟩
-      if p a then
-        go (i+1) (r.push a)
-      else
-        r
-    else
-      r
-termination_by as.size - i
-
-#eval takeWhile (fun n : Nat => if n % 2 = 1 then true else false) #[1, 3, 5, 6, 7]
-
-theorem div_lemma {x y : Nat} : 0 < y ∧ y ≤ x → x - y < x :=
-  fun ⟨ypos, ylex⟩ => Nat.sub_lt (Nat.lt_of_lt_of_le ypos ylex) ypos
-
-def div (x y : Nat) : Nat :=
-  if h : 0 < y ∧ y ≤ x then
-    div (x - y) y + 1
-  else
-    0
-decreasing_by apply div_lemma; assumption
-
-def ack : Nat → Nat → Nat
-  | 0,   y   => y+1
-  | x+1, 0   => ack x 1
-  | x+1, y+1 => ack x (ack (x+1) y)
-termination_by x y => (x, y)
-decreasing_by
-  all_goals simp_wf -- unfolds well-founded recursion auxiliary definitions
-  · apply Prod.Lex.left; simp_arith
-  · apply Prod.Lex.right; simp_arith
-  · apply Prod.Lex.left; simp_arith
-
-def natToBin : Nat → List Nat
-  | 0     => [0]
-  | 1     => [1]
-  | n + 2 => natToBin ((n + 2) / 2) ++ [n % 2]
-decreasing_by sorry
-
-#eval natToBin 1234567
-
-def unsound (x : Nat) : False :=
-  unsound (x + 1)
-decreasing_by sorry
-
-#check unsound 0
--- `unsound 0` is a proof of `False`
-
-#print axioms unsound
--- 'unsound' depends on axioms: [sorryAx]
 
 /-
 	Mutual Recursion

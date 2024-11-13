@@ -39,7 +39,7 @@ theorem T : a = e :=
 example (a b c d : Nat) (h1 : a = b) (h2 : b ≤ c) (h3 : c + 1 < d) : a < d :=
   calc
     a = b     := h1
-    _ < b + 1 := Nat.lt_succ_self b
+    _ < b + 1 := Nat.lt_succ_self _
     _ ≤ c + 1 := Nat.succ_le_succ h2
     _ < d     := h3
 
@@ -63,13 +63,13 @@ example (h₁ : divides x y) (h₂ : y = z) : divides x (2*z) :=
     _ = z           := h₂
     divides _ (2*z) := divides_mul ..
 
-infix:50 " ∣ " => divides
+infix:50 " ∣' " => divides
 
 example (h₁ : divides x y) (h₂ : y = z) : divides x (2*z) :=
   calc
-    x ∣ y   := h₁
+    x ∣' y   := h₁
     _ = z   := h₂
-    _ ∣ 2*z := divides_mul ..
+    _ ∣' 2*z := divides_mul ..
 
 example (x y : Nat) : (x + y) * (x + y) = x * x + y * x + x * y + y * y :=
   calc

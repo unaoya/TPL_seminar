@@ -45,6 +45,24 @@ example (α : Type) (p q : α → Prop) : (∃ x, p x ∧ q x) → ∃ x, q x �
   intro ⟨w, hpw, hqw⟩
   exact ⟨w, hqw, hpw⟩
 
+example (α : Type) (p q : α → Prop) : (∃ x, p x ∨ q x) → ∃ x, q x ∨ p x :=
+  fun ⟨x, h⟩ =>
+  match h with
+  | Or.inl h' => ⟨x, Or.inr h'⟩
+  | Or.inr h' => ⟨x, Or.inl h'⟩
+
+example (α : Type) (p q : α → Prop) : (∃ x, p x ∨ q x) → ∃ x, q x ∨ p x :=
+  fun h =>
+  match h with
+  | ⟨x, Or.inl h'⟩ => ⟨x, Or.inr h'⟩
+  | ⟨x, Or.inr h'⟩ => ⟨x, Or.inl h'⟩
+
+example (α : Type) (p q : α → Prop) : (∃ x, p x ∨ q x) → ∃ x, q x ∨ p x := by
+  intro h
+  rcases h with ⟨x, (h'' | h'')⟩
+  · sorry
+  · sorry
+
 example (α : Type) (p q : α → Prop) : (∃ x, p x ∨ q x) → ∃ x, q x ∨ p x := by
   intro
   | ⟨w, Or.inl h⟩ => exact ⟨w, Or.inr h⟩
@@ -59,10 +77,12 @@ example (x y z w : Nat) (h₁ : x = y) (h₂ : y = z) (h₃ : z = w) : x = w := 
   apply Eq.trans h₁
   apply Eq.trans h₂
   assumption   -- applied h₃
+  -- ‹z = w›
 
 example (x y z w : Nat) (h₁ : x = y) (h₂ : y = z) (h₃ : z = w) : x = w := by
   apply Eq.trans
-  assumption      -- solves x = ?b with h₁
+  case b => exact z
+  case h₂ => assumption      -- solves x = ?b with h₁
   apply Eq.trans
   assumption      -- solves y = ?h₂.b with h₂
   assumption      -- solves z = w with h₃

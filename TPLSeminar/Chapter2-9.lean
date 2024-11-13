@@ -2,11 +2,14 @@
   Implicit Arguments
 -/
 
+
 universe u
+
 def Lst (α : Type u) : Type u := List α
 def Lst.cons (α : Type u) (a : α) (as : Lst α) : Lst α := List.cons a as
 def Lst.nil (α : Type u) : Lst α := List.nil
 def Lst.append (α : Type u) (as bs : Lst α) : Lst α := List.append as bs
+
 #check Lst          -- Lst.{u} (α : Type u) : Type u
 #check Lst.cons     -- Lst.cons.{u} (α : Type u) (a : α) (as : Lst α) : Lst α
 #check Lst.nil      -- Lst.nil.{u} (α : Type u) : Lst α
@@ -21,37 +24,25 @@ def bs : Lst Nat := Lst.cons Nat 5 (Lst.nil Nat)
 #check Lst.append Nat as bs              -- Lst Nat
 #eval Lst.append Nat as bs               -- [5]
 
-universe u
-def Lst (α : Type u) : Type u := List α
-def Lst.cons (α : Type u) (a : α) (as : Lst α) : Lst α := List.cons a as
-def Lst.nil (α : Type u) : Lst α := List.nil
-def Lst.append (α : Type u) (as bs : Lst α) : Lst α := List.append as bs
-#check Lst          -- Type u_1 → Type u_1
-#check Lst.cons     -- (α : Type u_1) → α → Lst α → Lst α
-#check Lst.nil      -- (α : Type u_1) → Lst α
-#check Lst.append   -- (α : Type u_1) → Lst α → Lst α → Lst α
 #check Lst.cons _ 0 (Lst.nil _)      -- Lst Nat
 
-def as : Lst Nat := Lst.nil _
-def bs : Lst Nat := Lst.cons _ 5 (Lst.nil _)
+def as' : Lst Nat := Lst.nil _
+def bs' : Lst Nat := Lst.cons _ 5 (Lst.nil _)
 
 #check Lst.append _ as bs            -- Lst Nat
 
-universe u
-def Lst (α : Type u) : Type u := List α
 
-def Lst.cons {α : Type u} (a : α) (as : Lst α) : Lst α := List.cons a as
-def Lst.nil {α : Type u} : Lst α := List.nil
-def Lst.append {α : Type u} (as bs : Lst α) : Lst α := List.append as bs
+def Lst.cons' {α : Type u} (a : α) (as : Lst α) : Lst α := List.cons a as
+def Lst.nil' {α : Type u} : Lst α := List.nil
+def Lst.append' {α : Type u} (as bs : Lst α) : Lst α := List.append as bs
 
-#check Lst.cons 0 Lst.nil      -- Lst Nat
+#check Lst.cons' 0 Lst.nil'      -- Lst Nat
 
-def as : Lst Nat := Lst.nil
-def bs : Lst Nat := Lst.cons 5 Lst.nil
+def as'' : Lst Nat := Lst.nil'
+def bs'' : Lst Nat := Lst.cons' 5 Lst.nil'
 
-#check Lst.append as bs        -- Lst Nat
+#check Lst.append' as bs        -- Lst Nat
 
-universe u
 def ident {α : Type u} (x : α) := x
 
 #check ident         -- ?m → ?m
@@ -59,12 +50,14 @@ def ident {α : Type u} (x : α) := x
 #check ident "hello" -- String
 #check @ident        -- {α : Type u_1} → α → α
 
-universe u
+#check @ident Nat 1
+-- #check @ident 1
+
 
 section
   variable {α : Type u}
   variable (x : α)
-  def ident := x
+  def ident' := x
 end
 
 #check ident           -- {α : Type u_1} → α → α

@@ -27,10 +27,12 @@ example (x y z : Nat) (hxy : x < y) (hyz : y < z) : ∃ w, x < w ∧ w < z :=
 variable (g : Nat → Nat → Nat)
 variable (hg : g 0 0 = 0)
 
-theorem gex1 : ∃ x, g x x = x := ⟨0, hg⟩
-theorem gex2 : ∃ x, g x 0 = x := ⟨0, hg⟩
-theorem gex3 : ∃ x, g 0 0 = x := ⟨0, hg⟩
-theorem gex4 : ∃ x, g x x = 0 := ⟨0, hg⟩
+#check Exists.intro 0 hg
+
+theorem gex1 : ∃ x, g x x = x := Exists.intro 0 hg
+theorem gex2 : ∃ x, g x 0 = x := Exists.intro 0 hg
+theorem gex3 : ∃ x, g 0 0 = x := Exists.intro 0 hg
+theorem gex4 : ∃ x, g x x = 0 := Exists.intro 0 hg
 
 set_option pp.explicit true  -- 暗黙の引数を表示する
 #print gex1
@@ -60,6 +62,19 @@ variable (a : α) (p : α → Type) (h : p a)
 #check Sigma.mk a h      -- Sigma p
 end sigma_type
 
+inductive A : Type
+| a : A
+| b : A
+
+#check A.a
+#check A.b
+
+def f : A → Nat :=
+  fun x =>
+    match x with
+    | A.a => 0
+    | A.b => 1
+
 variable (α : Type) (p q : α → Prop)
 
 example (h : ∃ x, p x ∧ q x) : ∃ x, q x ∧ p x :=
@@ -81,6 +96,8 @@ example (h : ∃ x, p x ∧ q x) : ∃ x, q x ∧ p x :=
 example : (∃ x, p x ∧ q x) → ∃ x, q x ∧ p x :=
   fun ⟨w, hpw, hqw⟩ => ⟨w, hqw, hpw⟩
 
+-- 11/5ここまで
+
 def is_even (a : Nat) : Prop := ∃ b : Nat, a = 2 * b
 
 theorem even_plus_even {a b : Nat} (h1 : is_even a) (h2 : is_even b) : is_even (a + b) :=
@@ -91,7 +108,7 @@ theorem even_plus_even {a b : Nat} (h1 : is_even a) (h2 : is_even b) : is_even (
         _ = 2 * w1 + 2 * w2 := by rw [hw1, hw2]
         _ = 2 * (w1 + w2)   := by rw [Nat.mul_add])))
 
-theorem even_plus_even2 : ∀ a b : Nat, is_even a → is_even b → is_even (a + b) :=
+theorem even_plus_even₁ : ∀ a b : Nat, is_even a → is_even b → is_even (a + b) :=
   fun a : Nat =>
   fun b : Nat =>
   fun ⟨(w1 : Nat), (hw1 : a = 2 * w1)⟩ =>
@@ -102,7 +119,7 @@ theorem even_plus_even2 : ∀ a b : Nat, is_even a → is_even b → is_even (a 
         _ = 2 * (w1 + w2)   := by rw [Nat.mul_add]
     ⟨(w1 + w2 : Nat), (hw3 : a + b = 2 * (w1 + w2))⟩
 
-theorem even_plus_even (h1 : is_even a) (h2 : is_even b) : is_even (a + b) :=
+theorem even_plus_even₂ (h1 : is_even a) (h2 : is_even b) : is_even (a + b) :=
   match h1, h2 with
   | ⟨w1, hw1⟩, ⟨w2, hw2⟩ => ⟨w1 + w2, by rw [hw1, hw2, Nat.mul_add]⟩
 
@@ -125,15 +142,42 @@ open Classical
 variable (α : Type) (p q : α → Prop)
 variable (r : Prop)
 
-example : (∃ x : α, r) → r := sorry
-example (a : α) : r → (∃ x : α, r) := sorry
+example : (∃ _ : α, r) → r :=
+  fun (h : ∃ _ : α, r) =>
+    match h with
+    | ⟨_, hw⟩ => hw
+
+example (a : α) : r → (∃ _ : α, r) :=
+  fun (hr : r) => ⟨a, hr⟩
+
+-- example : r → (∃ x : α, r) := sorry
+
 example : (∃ x, p x ∧ r) ↔ (∃ x, p x) ∧ r := sorry
 example : (∃ x, p x ∨ q x) ↔ (∃ x, p x) ∨ (∃ x, q x) := sorry
 
-example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) := sorry
+
+example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) :=
+  Iff.intro
+    (fun h : ∀ x, p x =>
+      fun h' : ∃ x, ¬ p x =>
+        Exists.elim h'
+          (fun y hy => hy (h y)))
+    (fun h : ¬ ∃ x, ¬ p x =>
+      fun x =>
+        byContradiction fun h' => h (Exists.intro x h'))
+
+
 example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) := sorry
 example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) := sorry
-example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) := sorry
+
+example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) :=
+  Iff.intro
+    (sorry)
+    (fun h : ∃ x, ¬ p x =>
+      fun h' : ∀ x, p x =>
+        Exists.elim h
+          (fun y hy => absurd (h' y) hy))
+
 
 example : (∀ x, p x → r) ↔ (∃ x, p x) → r := sorry
 example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r := sorry

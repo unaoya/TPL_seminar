@@ -21,29 +21,21 @@ theorem cons_append (a : α) (as bs : List α)
                     : append (cons a as) bs = cons a (append as bs) :=
   rfl
 
-end List
-end Hidden
-
-namespace Hidden
-inductive List (α : Type u) where
-| nil  : List α
-| cons : α → List α → List α
-namespace List
-def append (as bs : List α) : List α :=
- match as with
- | nil       => bs
- | cons a as => cons a (append as bs)
-theorem nil_append (as : List α) : append nil as = as :=
- rfl
-theorem cons_append (a : α) (as bs : List α)
-                    : append (cons a as) bs = cons a (append as bs) :=
- rfl
 theorem append_nil (as : List α) : append as nil = as :=
-  sorry
+  -- List.recOn as rfl
+  --   (fun a as ih =>
+  --     show append (cons a as) nil = cons a as from
+  --     by rw [cons_append, ih])
+  match as with
+  | nil       => rfl
+  | cons a as => by rw [cons_append, append_nil]
 
 theorem append_assoc (as bs cs : List α)
         : append (append as bs) cs = append as (append bs cs) :=
-  sorry
+  match as with
+  | nil       => rfl
+  | cons a as => by rw [cons_append]; rw [cons_append]; rw[cons_append]; rw [append_assoc]
+
 end List
 end Hidden
 
