@@ -4,6 +4,7 @@
   More on Sections
 -/
 
+
 section
 variable (x y : Nat)
 
@@ -23,4 +24,12 @@ theorem t1 : double (x + y) = double x + double y := by
 theorem t2 : double (x * y) = double x * y := by
   simp [double, Nat.add_mul]
 
+#check x
+
 end
+
+-- #check x
+
+#check double
+
+#check t1

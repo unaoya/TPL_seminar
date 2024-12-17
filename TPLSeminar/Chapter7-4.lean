@@ -15,6 +15,14 @@ inductive Nat where
 --   → ((n : Nat) → motive n → motive (Nat.succ n))
 --   → (t : Nat) → motive t
 
+-- motiveは定義したい関数の行き先の型を指定する
+-- 依存型関数も定義できるように、motiveはNatで添字づけられた型の族である。
+-- これが定数 α なら Nat → α を定義することになる。
+-- 一番最後の (t : Nat) → motive t が実際に定義された依存型関数
+-- Natのinductive typeとしての定義から、
+-- zeroの行き先をmotive Nat.zero型の項として定義し
+-- nの行き先がmotive n型の項と指定されているならばmotive n.succ型の項が指定され、それがn.succの行き先。
+
 -- @Nat.recOn :
 --   {motive : Nat → Sort u}
 --   → (t : Nat)
@@ -27,6 +35,63 @@ inductive Nat where
 --   | succ : Nat → Nat
 --   deriving Repr
 
+inductive Test where
+  | a : Test
+  | b : Test
+
+#check @Test.rec
+
+-- {motive : Test → Sort u_1} →
+--   motive Test.a →
+--     motive Test.b →
+--       (t : Test) → motive t
+
+-- Testを定義域とする関数を定義したいとする。
+-- まず行き先の型を決める。
+-- これは依存型もありなので、Test → Sort u という型の族を指定することになる。
+-- この項を motive とする。
+-- このうえで、a の行き先と b の行き先を motive a 型の項と motive b 型の項として指定する。
+-- これで、(x : Test) → motive x という型を持つ関数が定義される。
+
+inductive Sum (α β : Type) where
+  | inl : α → Sum α β
+  | inr : β → Sum α β
+
+#check @Sum.rec
+-- {α β : Type} →
+--   {motive : Sum α β → Sort u_1} →
+--     ((a : α) → motive (Sum.inl a)) →
+--       ((a : β) → motive (Sum.inr a)) →
+--         (t : Sum α β) → motive t
+
+-- motiveが定数な場合（つまり依存型でない普通の関数）の場合を考えるとわかりやすいかも
+
+inductive Eq : α → α → Prop where
+  /-- `Eq.refl a : a = a` is reflexivity, the unique constructor of the
+  equality type. See also `rfl`, which is usually used instead. -/
+  | refl (a : α) : Eq a a
+
+set_option pp.all true
+#check @Eq.rec
+-- {α : Sort u_2} →
+--   {a : α} →
+--     {motive : (a_1 : α) → @Hidden.Eq.{u_2} α a a_1 → Sort u_1} →
+--       motive a (@Hidden.Eq.refl.{u_2} α a) →
+--         {a_1 : α} →
+--           (t : @Hidden.Eq.{u_2} α a a_1) →
+--             motive a_1 t
+
+variable (α : Type) (a : α)
+#check @Eq.rec α
+#check @Eq.rec α a
+
+example (α : Type) (a b : α) (h : Eq a b) : Eq b a :=
+  match h with
+  | Eq.refl a => Eq.refl a
+
+example (α : Type) (a b : α) (h : Eq a b) : Eq b a :=
+  let motive : (x : α) → Eq a x → Prop := fun x _ => Eq x a
+  @Eq.rec α a motive (Eq.refl a) b h
 
 namespace Nat
 

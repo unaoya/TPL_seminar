@@ -15,13 +15,13 @@ example (p q : Prop) (hp : p) : p ∨ q := by
 example (p q : Prop) (hq : q) : p ∨ q := by
   first | apply Or.inl; assumption | apply Or.inr; assumption
 
-example (p q r : Prop) (hp : p) : p ∨ q ∨ r :=
+example (p q r : Prop) (hp : p) : p ∨ (q ∨ r) :=
   by repeat (first | apply Or.inl; assumption | apply Or.inr | assumption)
 
-example (p q r : Prop) (hq : q) : p ∨ q ∨ r :=
+example (p q r : Prop) (hq : q) : p ∨ (q ∨ r) :=
   by repeat (first | apply Or.inl; assumption | apply Or.inr | assumption)
 
-example (p q r : Prop) (hr : r) : p ∨ q ∨ r :=
+example (p q r : Prop) (hr : r) : p ∨ (q ∨ r) :=
   by repeat (first | apply Or.inl; assumption | apply Or.inr | assumption)
 
 /- repeat と first を使わなかった場合 -/
@@ -37,6 +37,9 @@ example (p q r : Prop) (hr : r) : p ∨ q ∨ r :=
   by apply Or.inr
      apply Or.inr
      assumption
+
+example (p q r s t : Prop) (ht : t) : p ∨ q ∨ r ∨ s ∨ t :=
+  by repeat (first | apply Or.inl; assumption | apply Or.inr | assumption)
 
 example (p q r : Prop) (hp : p) (hq : q) (hr : r) : p ∧ q ∧ r := by
   constructor <;> (try constructor) <;> assumption

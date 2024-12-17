@@ -7,13 +7,18 @@ namespace ex3
 -- fun a => a + 1
 #check (2 - ·)
 -- fun a => 2 - a
-#eval [1, 2, 3, 4, 5].foldl (·*·) 1
+#eval [1, 2, 3, 4, 5].foldl (fun x y => x * y) 1
+-- 120
+#eval [1, 2, 3, 4, 5].foldl (· * ·) 1
 -- 120
 
 def f (x y z : Nat) :=
   x + y + z
 
 #check (f · 1 ·)
+-- fun a b => f a 1 b
+
+#check (f _ 1 _)
 -- fun a b => f a 1 b
 
 #eval [(1, 2), (3, 4), (5, 6)].map (·.1)

@@ -2,32 +2,26 @@
   More on Namespaces
 -/
 
-section
-variable (x y : Nat)
+def bar : Nat := 1
 
-def double := x + x
-
-#check double y
-#check double (2 * x)
-
-attribute [local simp] Nat.add_assoc Nat.add_comm Nat.add_left_comm
-
-theorem t1 : double (x + y) = double x + double y := by
-  simp [double]
-
-#check t1 y
-#check t1 (2 * x)
-
-theorem t2 : double (x * y) = double x * y := by
-  simp [double, Nat.add_mul]
-
-end
-
-def Foo.bar : Nat := 1
+def Foo.b : Nat := 3
 
 namespace Foo
-def bar : Nat := 1
+
+def bar : Nat := 2
+
+#eval bar
+#eval Foo.bar
+
+#eval b
+
 end Foo
+
+#eval bar
+#eval Foo.bar
+
+#eval Foo.b
+
 
 def String.add (a b : String) : String :=
   a ++ b
@@ -37,9 +31,15 @@ def Bool.add (a b : Bool) : Bool :=
 
 def add (α β : Type) : Type := Sum α β
 
-open Bool
+#check add -- これは曖昧である
+
 open String
--- #check add -- これは曖昧である
+#check add -- これは曖昧である
+
+open Bool
+#check add -- これは曖昧である
+
+#check add -- これは曖昧である
 #check String.add           -- String → String → String
 #check Bool.add             -- Bool → Bool → Bool
 #check _root_.add           -- Type → Type → Type
@@ -48,16 +48,24 @@ open String
 #check add true false       -- Bool
 #check add Nat Nat          -- Type
 
-protected def Foo.bar : Nat := 1
+protected def Foo.a : Nat := 1
 
 open Foo
 
 -- #check bar -- error
-#check Foo.bar
+#check Foo.a
+-- #check a
+
+-- #check zero
+#check Nat.zero
+#check Nat.add
 
 open Nat (succ zero gcd)
 #check zero     -- Nat
 #eval gcd 15 6  -- 3
+
+#check Nat.add
+#check add
 
 open Nat hiding succ gcd
 #check zero     -- Nat

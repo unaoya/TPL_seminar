@@ -59,5 +59,14 @@ def getBinderType : Term → Option Term
   | Term.lambda (type := t) .. => some t
   | _ => none
 
+def x : Term := Term.num 0
+def a : Term := Term.var "a"
+def t : Term := Term.lambda "f" a x
+example : getBinderName t = some "f" := rfl
+
+
+example (f : Nat → Nat) (a b c : Nat) : f (a + b + c) = f (a + (b + c)) :=
+  congrArg f (Nat.add_assoc _ _ _)
+
 example (f : Nat → Nat) (a b c : Nat) : f (a + b + c) = f (a + (b + c)) :=
   congrArg f (Nat.add_assoc ..)

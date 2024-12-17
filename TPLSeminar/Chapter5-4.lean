@@ -5,7 +5,7 @@
 example (p q r : Prop) : p ∧ (q ∨ r) → (p ∧ q) ∨ (p ∧ r) := by
   intro h
   exact
-    have hp : p := h.left
+    have hp : p := And.left h
     have hqr : q ∨ r := h.right
     show (p ∧ q) ∨ (p ∧ r) by
       cases hqr with
@@ -42,11 +42,15 @@ example (p q r : Prop) : p ∧ (q ∨ r) ↔ (p ∧ q) ∨ (p ∧ r) := by
       show p ∧ (q ∨ r)
       exact ⟨hpr.left, Or.inr hpr.right⟩
 
+#print Nat.add
+
 example (n : Nat) : n + 1 = Nat.succ n := by
   -- goal is n: Nat ⊢ n + 1 = Nat.succ n
   show Nat.succ n = Nat.succ n
   -- goal is n: Nat ⊢ Nat.succ n = Nat.succ n
   rfl
+
+example : 1 = Nat.succ 0 := by rfl
 
 example (n : Nat) : n + 1 = Nat.succ n := by
   -- goal is n: Nat ⊢ n + 1 = Nat.succ n
@@ -88,6 +92,11 @@ example (p q r : Prop) : p ∧ (q ∨ r) → (p ∧ q) ∨ (p ∧ r) := by
     have := And.intro hp hr
     apply Or.inr; exact this
 
+
+example : ∃ x, x + 2 = 8 := by
+  have a : Nat := 3 * 2
+  exists a
+  sorry
 
 example : ∃ x, x + 2 = 8 := by
   let a : Nat := 3 * 2

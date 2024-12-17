@@ -125,6 +125,8 @@ example (p q r : Prop) : p ∧ (q ∨ r) ↔ (p ∧ q) ∨ (p ∧ r) := by
 
 -- 11/13ここまで
 
+#check Exists.intro
+
 example (p q : Nat → Prop) : (∃ x, p x) → ∃ x, p x ∨ q x := by
   intro h
   cases h with
@@ -152,12 +154,38 @@ def swap_pair : α × β → β × α := by
   intro p
   cases p
   constructor <;> assumption
+  -- apply Prod.mk
+
 
 def swap_sum : Sum α β → Sum β α := by
   intro p
   cases p
   . apply Sum.inr; assumption
   . apply Sum.inl; assumption
+
+def swap_sum' : Sum α β → Sum β α := by
+  intro p
+  cases p
+  . apply Sum.inr; assumption
+  . constructor; assumption
+
+def h : Nat := by
+  constructor
+
+#print h
+
+example (p q : Prop) (hp : p) (hq : q) : p ∧ q :=
+  And.intro hp hq
+
+example (p q : Prop) (hp : p) (hq : q) : p ∧ q := by
+  apply And.intro
+  exact hp
+  exact hq
+
+example (p q : Prop) (hp : p) (hq : q) : p ∧ q := by
+  constructor
+  exact hp
+  exact hq
 
 theorem swap_and : a ∧ b → b ∧ a := by
   intro p
@@ -189,14 +217,14 @@ example (p q r : Prop) : p ∧ (q ∨ r) ↔ (p ∧ q) ∨ (p ∧ r) := by
     | ⟨_, Or.inr _⟩ => apply Or.inr; constructor <;> assumption
   . intro h
     match h with
-    | Or.inl ⟨hp, hq⟩ => constructor; exact hp; apply Or.inl; exact hq
+    | Or.inl ⟨_, _⟩ => constructor; assumption; apply Or.inl; assumption
     | Or.inr ⟨hp, hr⟩ => constructor; exact hp; apply Or.inr; exact hr
 
 example (p q r : Prop) : p ∧ (q ∨ r) ↔ (p ∧ q) ∨ (p ∧ r) := by
   apply Iff.intro
   . intro
-    | ⟨hp, Or.inl hq⟩ => apply Or.inl; constructor <;> assumption
-    | ⟨hp, Or.inr hr⟩ => apply Or.inr; constructor <;> assumption
+    | ⟨_, Or.inl _⟩ => apply Or.inl; constructor <;> assumption
+    | ⟨_, Or.inr _⟩ => apply Or.inr; constructor <;> assumption
   . intro
     | Or.inl ⟨hp, hq⟩ => constructor; assumption; apply Or.inl; assumption
     | Or.inr ⟨hp, hr⟩ => constructor; assumption; apply Or.inr; assumption
