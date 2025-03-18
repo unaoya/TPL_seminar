@@ -25,8 +25,17 @@ def f (n : Nat) : Nat := by
 example : f 0 = 3 := rfl
 example : f 5 = 7 := rfl
 
+
+-- α : Type, p : α -> Prop
+-- (x : α, h : p x) たちの型 β を定義できる
+-- mk : (x : α) → p x → β
 def Tuple (α : Type) (n : Nat) :=
   { as : List α // as.length = n }
+
+#check Tuple Nat 3
+
+def xs : Tuple Nat 3 :=
+  ⟨[0, 1, 2], rfl⟩
 
 def f₁ {n : Nat} (t : Tuple α n) : Nat := by
   cases n; exact 3; exact 7
@@ -41,6 +50,8 @@ inductive Foo where
   | bar1 : Nat → Nat → Foo
   | bar2 : Nat → Nat → Nat → Foo
 
+  -- Foo型の項はbar1 n mの形かbar2 n m kの形である
+
 def silly (x : Foo) : Nat := by
   cases x with
   | bar1 a b => exact b
@@ -53,6 +64,9 @@ def silly₁ (x : Foo) : Nat := by
   cases x with
   | bar2 c d e => exact e
   | bar1 a b => exact b
+
+def g (x : Nat) : Nat := 0
+def g₁ (x : Nat) : Nat := by apply g; exact 0
 
 def silly₂ (x : Foo) : Nat := by
   cases x
@@ -83,10 +97,13 @@ example (p : Prop) (m n : Nat)
   case inl hlt => exact h₁ hlt
   case inr hge => exact h₂ hge
 
+#check Or
+#print Or
+
 example (p : Prop) (m n : Nat)
         (h₁ : m < n → p) (h₂ : m ≥ n → p) : p := by
   have h : m < n ∨ m ≥ n := Nat.lt_or_ge m n
-  cases h
+  cases h -- Or p q
   case inl hlt => exact h₁ hlt
   case inr hge => exact h₂ hge
 
@@ -108,21 +125,34 @@ theorem zero_add (n : Nat) : 0 + n = n := by
   | zero => rfl
   | succ n ih => rw [Nat.add_succ, ih]
 
+theorem zero_add₂ (n : Nat) : 0 + n = n := by
+  cases n with
+  | zero => rfl
+  | succ n => rw [Nat.add_succ, zero_add₂ n]
+
+theorem zero_add₁ (n : Nat) : 0 + n = n := by
+  induction n
+  case zero => rfl
+  case succ n ih => rw [Nat.add_succ, ih]
+
 theorem add_zero (n : Nat) : n + 0 = n := Nat.add_zero n
 
 open Nat
 
-theorem zero_add₁ (n : Nat) : 0 + n = n := by
-  induction n <;> simp [*, add_zero, add_succ]
+-- theorem zero_add₃ (n : Nat) : 0 + n = n := by
+--   induction n <;> simp [*, Nat.add_zero, Nat.add_succ]
 
 theorem succ_add (m n : Nat) : succ m + n = succ (m + n) := by
-  induction n <;> simp [*, add_zero, add_succ]
+  induction n
+  case zero => rfl
+  case succ n ih => rw [add_succ, ih]; exact rfl
 
-theorem add_comm (m n : Nat) : m + n = n + m := by
-  induction n <;> simp [*, add_zero, add_succ, succ_add, zero_add]
+-- theorem add_comm (m n : Nat) : m + n = n + m := by
+--   induction n <;> simp [*, add_zero, add_succ, succ_add, zero_add]
 
-theorem add_assoc (m n k : Nat) : m + n + k = m + (n + k) := by
-  induction k <;> simp [*, add_zero, add_succ]
+-- theorem add_assoc (m n k : Nat) : m + n + k = m + (n + k) := by
+--   induction k <;> simp [*, add_zero, add_succ]
+
 end Hidden
 
 /-
@@ -158,11 +188,17 @@ example : s ∧ q ∧ r → p ∧ r → q ∧ p := by
   intro ⟨_, ⟨hq, _⟩⟩ ⟨hp, _⟩
   exact ⟨hq, hp⟩
 
+example : s ∧ q ∧ r → p ∧ r → q ∧ p := by
+  intro h₀ h₁
+  have hq : q := h₀.2.1
+  have hp : p := h₁.1
+  exact ⟨hq, hp⟩
+
 example :
     (fun (x : Nat × Nat) (y : Nat × Nat) => x.1 + y.2)
     =
     (fun (x : Nat × Nat) (z : Nat × Nat) => z.2 + x.1) := by
-  funext (a, b) (c, d)
+  funext (a, b) (_, d) -- b消せるけど注意でない？
   show a + d = d + a
   rw [Nat.add_comm]
 

@@ -29,25 +29,35 @@ noncomputable def div := WellFounded.fix (measure id).wf div.F
 
 #reduce div 8 2 -- 4
 
-def div (x y : Nat) : Nat :=
+namespace Hidden₁
+
+def div₁ (x y : Nat) : Nat :=
   if h : 0 < y ∧ y ≤ x then
-    have : x - y < x := Nat.sub_lt (Nat.lt_of_lt_of_le h.1 h.2) h.1
-    (div (x - y) y) + 1
+    -- have : x - y < x := Nat.sub_lt (Nat.lt_of_lt_of_le h.1 h.2) h.1
+    (div₁ (x - y) y) + 1
   else
     0
 
-def div (x y : Nat) : Nat :=
- if h : 0 < y ∧ y ≤ x then
-   have : x - y < x := Nat.sub_lt (Nat.lt_of_lt_of_le h.1 h.2) h.1
-   div (x - y) y + 1
- else
-   0
+end Hidden₁
+
+def div₂ (x y : Nat) : Nat :=
+  if h : 0 < y ∧ y ≤ x then
+  --  have : x - y < x := Nat.sub_lt (Nat.lt_of_lt_of_le h.1 h.2) h.1
+    div₂ (x - y) y + 1
+  else
+    0
+
 example (x y : Nat) : div x y = if 0 < y ∧ y ≤ x then div (x - y) y + 1 else 0 := by
   conv => lhs; unfold div -- 等式の左辺の `div` を展開する
+  sorry
+  -- exact?
 
-example (x y : Nat) (h : 0 < y ∧ y ≤ x) : div x y = div (x - y) y + 1 := by
-  conv => lhs; unfold div
-  simp [h]
+-- example (x y : Nat) (h : 0 < y ∧ y ≤ x) : div x y = div (x - y) y + 1 := by
+--   conv => lhs; unfold div
+--   simp [h]
+
+
+-- 1/14ここまで
 
 def natToBin : Nat → List Nat
   | 0     => [0]
@@ -64,6 +74,8 @@ def ack : Nat → Nat → Nat
   | x+1, y+1 => ack x (ack (x+1) y)
 termination_by x y => (x, y)
 
+#check (inferInstance : WellFoundedRelation Nat)
+
 #eval ack 3 5
 -- アッカーマン関数は入力値の増加に伴い出力値が急速に増加する関数であり、
 -- 例えば `#eval ack 4 1` などはバッファオーバーフロー等のエラーを引き起こす可能性が高いため、
@@ -71,6 +83,8 @@ termination_by x y => (x, y)
 
 instance (priority := low) [SizeOf α] : WellFoundedRelation α :=
   sizeOfWFRel
+
+variable {α : Type}
 
 -- Array `as` を先頭から見て、
 -- `as` の要素 `a` が `p a` を満たす限りArray `r` に `a` を追加し、`r` を返す関数
@@ -90,20 +104,20 @@ termination_by as.size - i
 
 #eval takeWhile (fun n : Nat => if n % 2 = 1 then true else false) #[1, 3, 5, 6, 7]
 
-theorem div_lemma {x y : Nat} : 0 < y ∧ y ≤ x → x - y < x :=
+theorem div_lemma' {x y : Nat} : 0 < y ∧ y ≤ x → x - y < x :=
   fun ⟨ypos, ylex⟩ => Nat.sub_lt (Nat.lt_of_lt_of_le ypos ylex) ypos
 
-def div (x y : Nat) : Nat :=
+def div₀ (x y : Nat) : Nat :=
   if h : 0 < y ∧ y ≤ x then
-    div (x - y) y + 1
+    div₀ (x - y) y + 1
   else
     0
-decreasing_by apply div_lemma; assumption
+decreasing_by apply div_lemma'; assumption
 
-def ack : Nat → Nat → Nat
+def ack' : Nat → Nat → Nat
   | 0,   y   => y+1
-  | x+1, 0   => ack x 1
-  | x+1, y+1 => ack x (ack (x+1) y)
+  | x+1, 0   => ack' x 1
+  | x+1, y+1 => ack' x (ack' (x+1) y)
 termination_by x y => (x, y)
 decreasing_by
   all_goals simp_wf -- unfolds well-founded recursion auxiliary definitions
@@ -111,11 +125,11 @@ decreasing_by
   · apply Prod.Lex.right; simp_arith
   · apply Prod.Lex.left; simp_arith
 
-def natToBin : Nat → List Nat
+def natToBin' : Nat → List Nat
   | 0     => [0]
   | 1     => [1]
-  | n + 2 => natToBin ((n + 2) / 2) ++ [n % 2]
-decreasing_by sorry
+  | n + 2 => natToBin' ((n + 2) / 2) ++ [n % 2]
+decreasing_by simp_wf; simp_arith; exact div_le_self n 2
 
 #eval natToBin 1234567
 

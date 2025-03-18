@@ -26,13 +26,13 @@ example (x : Nat) : isZero (succ x) = false := rfl
 example : sub1 7 = 6 := rfl
 example (x : Nat) : isZero (x + 3) = false := rfl
 
--- def sub1 : Nat → Nat
---   | 0   => 0
---   | x+1 => x
+def sub1' : Nat → Nat
+  | 0   => 0
+  | x+1 => x
 
--- def isZero : Nat → Bool
---   | 0   => true
---   | x+1 => false
+def isZero' : Nat → Bool
+  | 0   => true
+  | x+1 => false
 
 def swap : α × β → β × α
   | (a, b) => (b, a)
@@ -43,6 +43,8 @@ def foo : Nat × Nat → Nat
 def bar : Option Nat → Nat
   | some n => n + 1
   | none   => 0
+
+#print Bool
 
 namespace Hidden
 def not : Bool → Bool
@@ -70,6 +72,16 @@ def sub2 : Nat → Nat
   | 1   => 0
   | x+2 => x
 
+#print sub2
+#print sub2.match_1
+
+def sub2' : Nat → Nat
+  | 0   => 0
+  | x+1   =>
+    match x with
+    | 0   => 0
+    | x+1 => x
+
 example : sub2 0 = 0 := rfl
 example : sub2 1 = 0 := rfl
 example : sub2 (x+2) = x := rfl
@@ -88,15 +100,18 @@ example (p q : α → Prop)
   | Exists.intro x (Or.inl px) => Or.inl (Exists.intro x px)
   | Exists.intro x (Or.inr qx) => Or.inr (Exists.intro x qx)
 
-def foo : Nat × Nat → Nat
-  | (0, n)     => 0
-  | (m+1, 0)   => 1
-  | (m+1, n+1) => 2
-
 example (p q : α → Prop)
         : (∃ x, p x ∨ q x) → (∃ x, p x) ∨ (∃ x, q x)
-  | Exists.intro x (Or.inl px) => Or.inl (Exists.intro x px)
-  | Exists.intro x (Or.inr qx) => Or.inr (Exists.intro x qx)
+  | Exists.intro x h
+    =>
+    match h with
+    | Or.inl px => Or.inl (Exists.intro x px)
+    | Or.inr qx => Or.inr (Exists.intro x qx)
+
+def foo' : Nat × Nat → Nat
+  | (0, _)     => 0
+  | (_+1, 0)   => 1
+  | (_+1, _+1) => 2
 
 def foo₁ : Nat × Nat → Nat
   | (0, n)     => 0

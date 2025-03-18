@@ -1,6 +1,14 @@
 /-
 	Match Expressions
 -/
+def isNotZero' : Nat →  Bool
+  | 0   => false
+  | n+1 => true
+
+-- def isNotZero'' (m : Nat) : Bool
+--   | 0   => false
+--   | n+1 => true
+
 def isNotZero (m : Nat) : Bool :=
   match m with
   | 0   => false
@@ -25,7 +33,6 @@ def foo (n : Nat) (b c : Bool) :=
 #eval foo 7 true false
 
 example : foo 7 true false = 9 := rfl
-
 
 def bar₁ : Nat × Nat → Nat
   | (m, n) => m + n

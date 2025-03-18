@@ -16,6 +16,7 @@ namespace Vector
   → ((a : α) → {n : Nat} → (a_1 : Vector α n) → motive (n + 1) (cons a a_1))
   → motive a t
 -/
+
 def tailAux (v : Vector α m) : m = n + 1 → Vector α n :=
   Vector.casesOn (motive := fun x _ => x = n + 1 → Vector α n) v
     (fun h : 0 = n + 1 => Nat.noConfusion h)
@@ -29,8 +30,8 @@ def tail (v : Vector α (n+1)) : Vector α n :=
 def head : {n : Nat} → Vector α (n+1) → α
   | n, cons a as => a
 
-def tail : {n : Nat} → Vector α (n+1) → Vector α n
-  | n, cons a as => as
+def tail' : {n : Nat} → Vector α (n+1) → Vector α n
+  | _, cons _ as => as
 
 theorem eta : ∀ {n : Nat} (v : Vector α (n+1)), cons (head v) (tail v) = v
   | n, cons a as => rfl
@@ -46,3 +47,5 @@ def zip : {n : Nat} → Vector α n → Vector β n → Vector (α × β) n
 #print map
 #print map.match_1
 end Vector
+
+-- 1/21ここまで

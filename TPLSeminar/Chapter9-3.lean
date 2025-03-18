@@ -5,11 +5,15 @@ structure Point (α : Type u) where
   x : α
   y : α
 
+#check Point
+
 inductive Color where
   | red | green | blue
 
 structure ColorPoint (α : Type u) extends Point α where
   c : Color
+
+#check ColorPoint.c
 
 structure Point3 (α : Type u) where
   x : α
@@ -32,3 +36,4 @@ def rgp : RedGreenPoint Nat :=
 
 example : rgp.x   = 10 := rfl
 example : rgp.red = 200 := rfl
+example : rgp.blue = 0 := rgp.no_blue

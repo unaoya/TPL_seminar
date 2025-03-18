@@ -3,6 +3,7 @@
 -/
 
 namespace Hidden
+
 inductive List (α : Type u) where
   | nil  : List α
   | cons : α → List α → List α
@@ -34,7 +35,24 @@ theorem append_assoc (as bs cs : List α)
         : append (append as bs) cs = append as (append bs cs) :=
   match as with
   | nil       => rfl
-  | cons a as => by rw [cons_append]; rw [cons_append]; rw[cons_append]; rw [append_assoc]
+  | cons a as => by rw [cons_append, cons_append, cons_append]; rw [append_assoc]
+
+def length : List α → Nat
+  | nil       => 0
+  | cons _ as => 1 + length as
+
+theorem nil_length : length (@nil α) = 0 :=
+  rfl
+
+theorem cons_length (a : α) (as : List α)
+                    : length (cons a as) = 1 + length as := rfl
+
+theorem length_append (as bs : List α)
+        : length (append as bs) = length as + length bs := by
+  match as with
+  | nil => simp [nil_append, nil_length]
+  | cons a as => rw [cons_append, cons_length, cons_length, length_append, Nat.add_assoc]
+
 
 end List
 end Hidden
@@ -46,7 +64,6 @@ end Hidden
 inductive BinaryTree where
   | leaf : BinaryTree
   | root (left : BinaryTree) (right : BinaryTree) : BinaryTree
-
 
 /- 1. ただ1つの頂点からなる有向グラフは全可算無限分木である。
    2. 次数0の頂点vと2つの全可算無限分木T_0,T_1,...を用意し、
@@ -69,3 +86,5 @@ def omega : CBTree :=
   sup toCBTree
 
 end CBTree
+
+-- 12/17ここまで

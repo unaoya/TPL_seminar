@@ -47,6 +47,8 @@ example : fib (n + 2) = fib (n + 1) + fib n := rfl
 
 example : fib 7 = 21 := rfl
 
+-- #eval fib 100
+
 def fibFast (n : Nat) : Nat :=
   (loop n).2
 where
@@ -66,13 +68,19 @@ variable (C : Nat → Type u)
 
 #check (@Nat.below C : Nat → Type u)
 
+#print Prod
+#print PProd
+
+#reduce @Nat.below C (0 : Nat)
+#reduce @Nat.below C (1 : Nat)
+#reduce @Nat.below C (2 : Nat)
 #reduce @Nat.below C (3 : Nat)
 
 #check (@Nat.brecOn C : (n : Nat) → ((n : Nat) → @Nat.below C n → C n) → C n)
 
 
 -- #eval fib 50 -- slow
-#reduce fib 50  -- fast
+#reduce fib 100  -- fast
 
 #print fib
 

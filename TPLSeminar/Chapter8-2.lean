@@ -3,14 +3,14 @@
 -/
 
 def foo : Nat → Nat → Nat
-  | 0,   n   => 0
-  | m+1, 0   => 1
-  | m+1, n+1 => 2
+  | 0,   _   => 0
+  | _+1, 0   => 1
+  | _+1, _+1 => 2
 
 def foo₁ : Nat → Nat → Nat
-  | 0, n => 0
-  | m, 0 => 1
-  | m, n => 2
+  | 0, _ => 0
+  | _, 0 => 1
+  | _, _ => 2
 
 example : foo 0     0     = 0 := rfl
 example : foo 0     (n+1) = 0 := rfl
@@ -26,6 +26,23 @@ def f1 : Nat → Nat → Nat
   | 0, _  => 1
   | _, 0  => 2
   | _, _  => default  -- the "incomplete" case
+#eval f1 1 1
+
+#check Inhabited
+#check Inhabited.default
+#check (inferInstance : Inhabited Nat).default
+#eval (inferInstance : Inhabited Nat).default
+
+-- instance : Inhabited Nat := ⟨1⟩
+
+-- #eval (inferInstance : Inhabited Nat).default
+
+-- def f2 : Nat → Nat → Nat
+--   | 0, _  => 1
+--   | _, 0  => 2
+--   | _, _  => default  -- the "incomplete" case
+
+-- #eval f2 1 1
 
 example : f1 0     0     = 1       := rfl
 example : f1 0     (a+1) = 1       := rfl

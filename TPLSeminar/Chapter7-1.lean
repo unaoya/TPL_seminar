@@ -10,25 +10,21 @@ inductive Weekday where
   | thursday : Weekday
   | friday : Weekday
   | saturday : Weekday
+  deriving Repr
 
+#check Weekday
 #check Weekday.sunday
 #check Weekday.monday
+
 
 open Weekday
 
 #check sunday
 #check monday
 
--- inductive Weekday where
---   | sunday
---   | monday
---   | tuesday
---   | wednesday
---   | thursday
---   | friday
---   | saturday
+example : sunday ≠ monday := noConfusion
 
-open Weekday
+#check Weekday.rec
 
 def numberOfDay (d : Weekday) : Nat :=
   match d with
@@ -67,8 +63,6 @@ set_option pp.all true    -- 詳細な情報を表示させるオプション
 -/
 
 
-open Weekday
-
 #eval tuesday   -- Weekday.tuesday (``deriving Repr`` を外すとエラーになる)
 
 namespace Weekday
@@ -82,6 +76,11 @@ def next (d : Weekday) : Weekday :=
   | thursday  => friday
   | friday    => saturday
   | saturday  => sunday
+
+#eval next monday
+
+variable (x : Weekday)
+#check x.next
 
 def previous (d : Weekday) : Weekday :=
   match d with
@@ -99,8 +98,6 @@ def previous (d : Weekday) : Weekday :=
 example : next (previous tuesday) = tuesday :=
   rfl
 
-end Weekday
-
 theorem next_previous (d : Weekday) : next (previous d) = d :=
   match d with
   | sunday    => rfl
@@ -113,6 +110,10 @@ theorem next_previous (d : Weekday) : next (previous d) = d :=
 
 def next_previous_ (d : Weekday) : next (previous d) = d := by
   cases d <;> rfl
+
+end Weekday
+
+#print Bool
 
 namespace Hidden
 

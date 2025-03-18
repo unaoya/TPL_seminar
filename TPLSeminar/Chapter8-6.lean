@@ -31,20 +31,13 @@ mutual
     | odd_succ : ∀ n, Even n → Odd (n + 1)
 end
 
-mutual
- inductive Even : Nat → Prop where
-   | even_zero : Even 0
-   | even_succ : ∀ n, Odd n → Even (n + 1)
- inductive Odd : Nat → Prop where
-   | odd_succ : ∀ n, Even n → Odd (n + 1)
-end
 open Even Odd
 
 theorem not_odd_zero : ¬ Odd 0 :=
   fun h => nomatch h
 
 theorem even_of_odd_succ : ∀ n, Odd (n + 1) → Even n
-  | _, odd_succ n h => h
+  | _, odd_succ _ h => h
 
 theorem odd_of_even_succ : ∀ n, Even (n + 1) → Odd n
   | _, even_succ n h => h
@@ -71,16 +64,6 @@ def sample2 := [app "g" [const "x", const "y"], const "y"]
 #eval numConsts sample
 #eval numConstsLst sample2
 
-end Term
-
-mutual
- def numConsts : Term → Nat
-   | const _ => 1
-   | app _ cs => numConstsLst cs
-  def numConstsLst : List Term → Nat
-   | [] => 0
-   | c :: cs => numConsts c + numConstsLst cs
-end
 mutual
   def replaceConst (a b : String) : Term → Term
     | const c => if a == c then const b else const c
