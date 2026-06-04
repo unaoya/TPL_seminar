@@ -16,12 +16,15 @@ def bar : Inhabited (Nat → Nat) := inferInstance
 
 def Set (α : Type u) := α → Prop
 
--- fails
+example : Inhabited (α → Prop) :=
+ inferInstance
+
+-- -- fails
 -- example : Inhabited (Set α) :=
 --  inferInstance
 
-instance : Inhabited (Set α) :=
-  inferInstanceAs (Inhabited (α → Prop))
+-- instance : Inhabited (Set α) :=
+--   inferInstanceAs (Inhabited (α → Prop))
 
 -- 別解
 example : Inhabited (Set α) :=
@@ -31,6 +34,10 @@ set_option trace.Meta.synthInstance true
 
 set_option synthInstance.maxHeartbeats 10000
 set_option synthInstance.maxSize 400
+
+-- example : Inhabited (α → Prop) :=
+--  inferInstance
+
 
 class Foo where
   a : Nat
@@ -43,6 +50,8 @@ instance (priority := default+1) i1 : Foo where
 instance i2 : Foo where
   a := 2
   b := 2
+
+#check Foo.a
 
 example : Foo.a = 1 :=
   rfl

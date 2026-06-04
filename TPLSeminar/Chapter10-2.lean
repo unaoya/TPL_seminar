@@ -4,6 +4,8 @@
 instance [Inhabited a] [Inhabited b] : Inhabited (a × b) where
   default := (default, default)
 
+#eval (Inhabited.default : Bool)
+
 #eval (Inhabited.default : Nat × Bool)
 -- (0, true)
 

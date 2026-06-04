@@ -4,10 +4,10 @@
 
 #check_failure (inferInstance : Inhabited (Nat × _))
 
+namespace Ex
+
 -- class HMul (α : Type u) (β : Type v) (γ : Type w) where
 --   hMul : α → β → γ
-
-namespace Ex
 
 class HMul (α : Type u) (β : Type v) (γ : outParam (Type w)) where
   hMul : α → β → γ

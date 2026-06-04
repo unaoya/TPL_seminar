@@ -1,22 +1,24 @@
 /-
 	Decidable Propositions
 -/
-variable (p : Nat → Prop)
 
+variable (p : Nat → Prop)
 
 -- error : failed to synthesize instance
 --   Decidable (p n)
 
 -- #synth Decidable (p 0)
 
-/-
-def bad_foo : Nat → Bool :=
-  fun (n : Nat) =>
-  if p n then true
-  else false
--/
+#check ite
 
-open Classical
+-- def bad_foo : Nat → Bool :=
+--   fun (n : Nat) =>
+--   if p n then true
+--   else false
+
+-- open Classical
+
+#synth Decidable (p 0)
 
 noncomputable def foo : Nat → Bool :=
   fun (n : Nat) =>
@@ -32,6 +34,7 @@ class inductive Decidable (p : Prop) where
   | isFalse (h : ¬p) : Decidable p
   | isTrue  (h : p)  : Decidable p
 
+-- if c then t eles e = ite c t e
 def ite {α : Sort u} (c : Prop) [h : Decidable c] (t e : α) : α :=
   Decidable.casesOn (motive := fun _ => α) h (fun _ => e) (fun _ => t)
 
@@ -47,23 +50,24 @@ end Hidden
 #check @instDecidableOr
 #check @instDecidableNot
 
+#synth Decidable (1 > 0)
+
 def step (a b x : Nat) : Nat :=
   if x < a ∨ x > b then 0 else 1
 
+#check ite
 set_option pp.explicit true  -- 暗黙の引数を表示する
 #print step
 
 
-namespace Hidden
 open Classical
 
-noncomputable scoped
+noncomputable
 instance (priority := low) propDecidable (a : Prop) : Decidable a :=
   choice <| match em a with
     | Or.inl h => ⟨isTrue h⟩
     | Or.inr h => ⟨isFalse h⟩
 
-end Hidden
 
 example : 10 < 5 ∨ 1 > 0 := by
   decide

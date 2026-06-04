@@ -1,12 +1,14 @@
 /-
 	Other tactics inside conversion mode
 -/
-example (a b c : Nat) : (0 + a) * (b * c) = a * (c * b) := by
+example (a b c : Nat) : a * (b * c) = a * (c * b) := by
   conv =>
+    -- ⊢ a * (b * c) = a * (c * b)
     lhs
-    congr
-    . rw [Nat.zero_add]
-    . rw [Nat.mul_comm]
+    -- ⊢ a * (b * c)
+    arg 2
+    -- ⊢ b * c
+    rw [Nat.mul_comm]
 
 def f (x : Nat) :=
   if x > 0 then x + 1 else x + 2
@@ -17,13 +19,13 @@ example (g : Nat → Nat) (h₁ : g x = x + 1) (h₂ : x > 0) : g x = f x := by
     simp [f, h₂]
   exact h₁
 
-syntax enterArg := ident <|> group("@"? num)
-syntax "enter " "[" (colGt enterArg),+ "]": conv
-macro_rules
-  | `(conv| enter [$i:num]) => `(conv| arg $i)
-  | `(conv| enter [@$i:num]) => `(conv| arg @$i)
-  | `(conv| enter [$id:ident]) => `(conv| ext $id)
-  | `(conv| enter [$arg:enterArg, $args,*]) => `(conv| (enter [$arg]; enter [$args,*]))
+-- syntax enterArg := ident <|> group("@"? num)
+-- syntax "enter " "[" (colGt enterArg),+ "]": conv
+-- macro_rules
+--   | `(conv| enter [$i:num]) => `(conv| arg $i)
+--   | `(conv| enter [@$i:num]) => `(conv| arg @$i)
+--   | `(conv| enter [$id:ident]) => `(conv| ext $id)
+--   | `(conv| enter [$arg:enterArg, $args,*]) => `(conv| (enter [$arg]; enter [$args,*]))
 
 example (g : Nat → Nat → Nat)
         (h₁ : ∀ x, x ≠ 0 → g x x = 1)

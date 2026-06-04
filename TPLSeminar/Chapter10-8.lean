@@ -16,6 +16,7 @@ def double (p : Point) :=
 end Point
 -- インスタンス `Add Point` はもう使えない
 
+
 -- #check fun (p : Point) => p + p + p  -- Error
 
 namespace Point

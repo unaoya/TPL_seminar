@@ -3,6 +3,8 @@ namespace Ex
 structure Add (a : Type) where
   add : a → a → a
 
+#check Add
+
 #check @Add.add
 -- Add.add : {a : Type} → Add a → a → a → a
 -- `Add.add` はstructure宣言によって自動生成される射影関数
@@ -27,6 +29,11 @@ namespace Ex2
 
 class Add (a : Type) where
   add : a → a → a
+
+#check Add Nat
+
+def x : Add Nat where
+  add := Nat.add
 
 instance : Add Nat where
   add := Nat.add
